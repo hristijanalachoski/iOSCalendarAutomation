@@ -1,0 +1,17 @@
+name: iOS Calendar Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    # iOS simulator tests need a Mac with Xcode, the simulator from config.properties,
+    # Java, Maven and Appium (with the XCUITest driver) already installed.
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run tests
+        run: mvn -B test

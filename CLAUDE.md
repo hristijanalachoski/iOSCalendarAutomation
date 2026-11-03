@@ -36,6 +36,10 @@ Surefire loads the AspectJ weaver as a `-javaagent` (see `pom.xml`); without it 
 - Xcode with an iOS simulator matching `src/main/resources/configs/config.properties` (`deviceName=iPhone 17 Pro`, `platformVersion=26.3`). Change these values to match an available simulator.
 - Network access to `https://bored-api.appbrewery.com/random` (used for event title data).
 
+### CI
+
+`.github/workflows/main.yml` runs `mvn -B test` on a **self-hosted** runner (a Mac with Xcode, the simulator from `config.properties`, Java, Maven and Appium + XCUITest already installed). It is started manually (`workflow_dispatch`) from the Actions tab and uploads `allure-results` and `screenshots` as build artifacts even when tests fail.
+
 ## Architecture
 
 - **Production code under `src/main/java`, tests under `src/test/java`.** The framework (pages + utilities) lives in `main`, so dependencies like TestNG are compile-scope, not test-scope.
