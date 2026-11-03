@@ -2,6 +2,15 @@ name: iOS Calendar Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      test_class:
+        description: 'Test class to run'
+        type: choice
+        default: 'All'
+        options:
+          - All
+          - CalendarTest
+          - AnotherTest
 
 jobs:
   run-tests:
@@ -14,7 +23,14 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Run tests
-        run: mvn -B test
+        env:
+          TEST_CLASS: ${{ inputs.test_class }}
+        run: |
+          if [ "$TEST_CLASS" = "All" ]; then
+            mvn -B test
+          else
+            mvn -B test -Dtest="$TEST_CLASS"
+          fi
 
       - name: Upload Allure results
         if: always()
