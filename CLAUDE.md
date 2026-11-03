@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 An Appium + TestNG mobile UI test project (Java 20, Maven) that automates the stock iOS Calendar app (`com.apple.mobilecal`) on an iOS simulator. Test data (event titles) is fetched live from a public REST API via Rest Assured.
 
+## Use appium-mcp for mobile work
+
+For any mobile automation development or test runs in this repo, use the **appium-mcp** tools (`mcp__appium-mcp__*`), not ad-hoc scripts or raw Appium HTTP calls:
+
+- Start with `select_device` (iOS simulator from `config.properties`), then `appium_session_management` (action=create) with bundle ID `com.apple.mobilecal`.
+- Use `appium_get_page_source`, `generate_locators` and `appium_find_element` to inspect screens and pick locators before writing or changing page objects. Prefer accessibility id / `iOSNsPredicate` / `iOSClassChain` over XPath.
+- Use `appium_gesture`, `appium_set_value`, `appium_screenshot` etc. to walk a flow by hand and confirm it works before encoding it in a test.
+- Delete the appium-mcp session when done. `mvn test` starts its own Appium server on port 4723, so a leftover session or server on that port can conflict with the suite.
+
 ## Commands
 
 There is no Maven wrapper (`.mvn/` is empty), so use a system `mvn`.
@@ -48,6 +57,7 @@ Surefire loads the AspectJ weaver as a `-javaagent` (see `pom.xml`); without it 
   - `@BeforeMethod` builds `XCUITestOptions` from `ConfigReader`, creates a fresh `IOSDriver` against `GlobalVariables.appiumLocalUrl`, and instantiates `RestAssuredUtility` plus every page object as protected fields. **When adding a new page object, add a field and instantiate it here** so tests can use it.
   - `@AfterMethod` quits the driver; `@AfterSuite` stops the Appium server.
 - **Page objects (`pages/`)** use Appium PageFactory (`io.appium.java_client.support.PageFactory` + `AppiumFieldDecorator`) with `@iOSXCUITFindBy` locators (prefer `iOSNsPredicate` / `iOSClassChain` / accessibility id). Each exposes a `...Loaded()` method that waits with `GlobalVariables.globalTimeout` and is asserted in tests.
+- **Verifying saved events:** events drawn in the day timeline are *not* in the accessibility tree (not findable by title). Switch to list view (`CalendarHomeScreen.switchToListView()`), where each event is an `XCUIElementTypeCell` labelled `"<title>, from <start> to <end>, <calendar>"`. Tests that save events should delete them and switch back to day view (see `CreateEventTest`), since `noReset=false` does not clear calendar data.
 - **`util.Helpers`** contains W3C-actions gestures (long press, vertical swipe, scroll-until-visible) and FluentWait helpers. Page objects that need gestures extend `Helpers` (e.g. `CalendarHomeScreen`).
 - **Screenshots:** `DriverSetup` is annotated with `@Listeners({ITestListenerUtility.class})`, so every test extending it gets a screenshot on pass and on fail, saved to `screenshots/Pass` or `screenshots/Fails` (gitignored) as `<Class>.<method> - <timestamp>.png`. `ScreenshotUtility` reads the driver from the test instance (`((DriverSetup) result.getInstance()).driver`); this works because TestNG fires `onTestSuccess`/`onTestFailure` before `@AfterMethod` quits the driver.
 - **Test data:** tests take parameters from TestNG DataProviders in `src/test/java/data/` (e.g. `CalendarTestData#calendarData` returns `{timeSlot, title}` rows), referenced via `@Test(dataProviderClass = ..., dataProvider = ...)`. Each row runs the test once.

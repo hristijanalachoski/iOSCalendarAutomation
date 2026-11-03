@@ -13,4 +13,12 @@ public class CalendarTestData {
                 {"05:00", "Test3"}
         };
     }
+
+    // {timeSlot, title} for tests that save the event; titles should be unique so leftovers don't match
+    @DataProvider(name = "createEventData")
+    public Object[][] createEventData() {
+        return new Object[][]{
+                {"05:00", "Appium MCP Event"}
+        };
+    }
 }
