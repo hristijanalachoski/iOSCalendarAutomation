@@ -27,6 +27,7 @@ public class DriverSetup {
 
     protected CalendarHomeScreen calendarHomeScreen;
     protected NewEventScreen newEventScreen;
+    protected EventDetailsScreen eventDetailsScreen;
 
     @BeforeSuite
     public void startAppiumServer() {
@@ -53,6 +54,7 @@ public class DriverSetup {
 
         calendarHomeScreen = new CalendarHomeScreen(driver);
         newEventScreen = new NewEventScreen(driver);
+        eventDetailsScreen = new EventDetailsScreen(driver);
     }
 
     @AfterMethod(alwaysRun = true)

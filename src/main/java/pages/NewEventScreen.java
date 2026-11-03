@@ -23,6 +23,9 @@ public class NewEventScreen {
     @iOSXCUITFindBy(iOSClassChain = "**/XCUIElementTypeTextField[`name == \"title-field\"`]")
     private WebElement titleTextField;
 
+    @iOSXCUITFindBy(accessibility = "add-button")
+    private WebElement addButton;
+
     public NewEventScreen(IOSDriver driver) {
         this.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -37,5 +40,10 @@ public class NewEventScreen {
     public void enterEventTitle(String eventTitle) {
         titleTextField.clear();
         titleTextField.sendKeys(eventTitle);
+    }
+
+    @Step("Saving the new event")
+    public void tapAddButton() {
+        new WebDriverWait(driver, GlobalVariables.globalTimeout).until(ExpectedConditions.elementToBeClickable(addButton)).click();
     }
 }
