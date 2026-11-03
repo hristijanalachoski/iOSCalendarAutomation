@@ -38,7 +38,7 @@ Surefire loads the AspectJ weaver as a `-javaagent` (see `pom.xml`); without it 
 
 ### CI
 
-`.github/workflows/main.yml` runs `mvn -B test` on a **self-hosted** runner (a Mac with Xcode, the simulator from `config.properties`, Java, Maven and Appium + XCUITest already installed). It is started manually (`workflow_dispatch`) from the Actions tab and uploads `allure-results` and `screenshots` as build artifacts even when tests fail.
+`.github/workflows/main.yml` runs `mvn -B test` on a **self-hosted** runner (a Mac with Xcode, the simulator from `config.properties`, Java, Maven and Appium + XCUITest already installed). It is started manually (`workflow_dispatch`) from the Actions tab, with a `test_class` dropdown (`All` or a single class, passed as `-Dtest=<class>`). **When adding a new test class, add it to the dropdown's `options`.** The workflow uploads `allure-results` and `screenshots` as build artifacts even when tests fail.
 
 ## Architecture
 
