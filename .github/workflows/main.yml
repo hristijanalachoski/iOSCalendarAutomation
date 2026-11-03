@@ -15,3 +15,19 @@ jobs:
 
       - name: Run tests
         run: mvn -B test
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+          if-no-files-found: ignore
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots
+          if-no-files-found: ignore
